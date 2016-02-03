@@ -72,7 +72,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
 
     public function createToken(Request $request, $providerKey)
     {
-        $apiKey = $request->headers->get('access_token');
+        $apiKey = $request->headers->get('apikey');
         if (!$apiKey) {
             $apiKey = $request->headers->get('accesstoken');
         }
