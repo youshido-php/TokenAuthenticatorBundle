@@ -30,7 +30,7 @@ class TokenUserProvider implements UserProviderInterface
      */
     public function findTokenByApiKey($apiKey)
     {
-        return $this->container->get('api_token_helper')->find($apiKey);
+        return $this->container->get('access_token_helper')->find($apiKey);
     }
 
     /**

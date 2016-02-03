@@ -49,7 +49,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             throw new NotValidTokenException('Access denied for this token.', $errorCode);
         }
 
-        if ($this->container->get('api_token_helper')->checkExpires($token)) {
+        if ($this->container->get('access_token_helper')->checkExpires($token)) {
             $em = $this->container->get('doctrine')->getEntityManager();
             $em->remove($token);
             $em->flush();
