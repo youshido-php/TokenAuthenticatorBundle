@@ -5,7 +5,7 @@ services:
         calls:
             - [ setUserClass, [%token_authenticator.user_model%]]
             - [ setContainer, [@service_container]]
-            - [ setLoginField, [%token_authenticator.model_field%]]
+            - [ setLoginField, [%token_authenticator.login_field%]]
 
     token_authenticator:
         class:  Youshido\TokenAuthenticationBundle\Service\TokenAuthenticator
