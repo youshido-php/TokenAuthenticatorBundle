@@ -18,3 +18,8 @@ services:
         calls:
             - [ setContainer, [@service_container]]
             - [ setTokenLifetime, [%token_authenticator.token_lifetime%]]
+
+    token_exception_listener:
+        class: Youshido\TokenAuthenticatorBundle\Service\Listener\ExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
