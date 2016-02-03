@@ -5,13 +5,13 @@
  * @author Portey Vasil <portey@gmail.com>
  */
 
-namespace Youshido\TokenAuthenticatorBundle\Service;
+namespace Youshido\TokenAuthenticationBundle\Service;
 
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Youshido\TokenAuthenticatorBundle\Entity\AccessToken;
+use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
 
 class TokenUserProvider implements UserProviderInterface
 {
@@ -26,7 +26,7 @@ class TokenUserProvider implements UserProviderInterface
 
     /**
      * @param $apiKey
-     * @return null|\Youshido\TokenAuthenticatorBundle\Entity\AccessToken
+     * @return null|\Youshido\TokenAuthenticationBundle\Entity\AccessToken
      */
     public function findTokenByApiKey($apiKey)
     {

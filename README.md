@@ -1,1 +1,1 @@
-# TokenAuthenticatorBundle
+# TokenAuthenticationBundle

@@ -1,25 +1,25 @@
 services:
 
     token_user_provider:
-        class: Youshido\TokenAuthenticatorBundle\Service\TokenUserProvider
+        class: Youshido\TokenAuthenticationBundle\Service\TokenUserProvider
         calls:
             - [ setUserClass, [%token_authenticator.user_model%]]
             - [ setContainer, [@service_container]]
             - [ setLoginField, [%token_authenticator.model_field%]]
 
     token_authenticator:
-        class:  Youshido\TokenAuthenticatorBundle\Service\TokenAuthenticator
+        class:  Youshido\TokenAuthenticationBundle\Service\TokenAuthenticator
         calls:
             - [ setContainer, [@service_container]]
         public: false
 
     access_token_helper:
-        class: Youshido\TokenAuthenticatorBundle\Service\Helper\AccessTokenHelper
+        class: Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper
         calls:
             - [ setContainer, [@service_container]]
             - [ setTokenLifetime, [%token_authenticator.token_lifetime%]]
 
     token_exception_listener:
-        class: Youshido\TokenAuthenticatorBundle\Service\Listener\ExceptionListener
+        class: Youshido\TokenAuthenticationBundle\Service\Listener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

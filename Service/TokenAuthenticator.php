@@ -5,10 +5,11 @@
  * @author Portey Vasil <portey@gmail.com>
  */
 
-namespace Youshido\TokenAuthenticatorBundle\Service;
+namespace Youshido\TokenAuthenticationBundle\Service;
 
 
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
@@ -17,11 +18,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
-use Youshido\TokenAuthenticatorBundle\Entity\AccessToken;
-use Youshido\TokenAuthenticatorBundle\Service\Exception\NotValidTokenException;
+use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
+use Youshido\TokenAuthenticationBundle\Service\Exception\NotValidTokenException;
 
-class TokenAuthenticator extends ContainerAware implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
+class TokenAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
+
+    use ContainerAwareTrait;
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
@@ -34,28 +37,29 @@ class TokenAuthenticator extends ContainerAware implements SimplePreAuthenticato
             );
         }
 
-        $apiKey = $token->getCredentials();
-        $token  = $userProvider->findTokenByApiKey($apiKey);
+        $errorCode = $this->container->getParameter('token_authenticator.error_codes')['invalid_token'];
+        $apiKey    = $token->getCredentials();
+        $token     = $userProvider->findTokenByApiKey($apiKey);
 
         if (!$token) {
-            throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $apiKey), 401);
+            throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $apiKey), $errorCode);
         }
 
         if ($token->getStatus() == AccessToken::STATUS_DENIED) {
-            throw new NotValidTokenException('Access denied for this token.', 401);
+            throw new NotValidTokenException('Access denied for this token.', $errorCode);
         }
 
         if ($this->container->get('api_token_helper')->checkExpires($token)) {
             $em = $this->container->get('doctrine')->getEntityManager();
             $em->remove($token);
             $em->flush();
-            throw new NotValidTokenException('Token expired. Please login again.', 401);
+            throw new NotValidTokenException('Token expired. Please login again.', $errorCode);
         }
 
         $user = $userProvider->loadUserByToken($token);
 
         if (!$user) {
-            throw new NotValidTokenException('User of this token not exist', 302);
+            throw new NotValidTokenException('User of this token not exist', $errorCode);
         }
 
         return new PreAuthenticatedToken($user, $apiKey, $providerKey, $user->getRoles());

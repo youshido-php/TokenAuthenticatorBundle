@@ -5,12 +5,12 @@
  * @author Portey Vasil <portey@gmail.com>
  */
 
-namespace Youshido\TokenAuthenticatorBundle\Service\Helper;
+namespace Youshido\TokenAuthenticationBundle\Service\Helper;
 
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Youshido\DoctrineExtensionBundle\Traits\Service\ServiceHelperTrait;
-use Youshido\TokenAuthenticatorBundle\Entity\AccessToken;
+use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
 
 class AccessTokenHelper extends ContainerAware
 {
@@ -45,7 +45,7 @@ class AccessTokenHelper extends ContainerAware
      */
     public function find($accessToken)
     {
-        return $this->getDoctrine()->getRepository('TokenAuthenticatorBundle:AccessToken')
+        return $this->getDoctrine()->getRepository('TokenAuthenticationBundle:AccessToken')
             ->findOneBy(['value' => $accessToken]);
     }
 
@@ -77,7 +77,7 @@ class AccessTokenHelper extends ContainerAware
      */
     public function findTokenByModelId($id)
     {
-        return $this->getDoctrine()->getRepository('TokenAuthenticatorBundle:AccessToken')->findOneBy(['modelId' => $id]);
+        return $this->getDoctrine()->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
     }
 
     public function transformToArray(AccessToken $token)

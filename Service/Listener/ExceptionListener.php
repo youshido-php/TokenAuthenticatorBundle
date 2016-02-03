@@ -1,6 +1,6 @@
 <?php
 
-namespace Youshido\TokenAuthenticatorBundle\Service\Listener;
+namespace Youshido\TokenAuthenticationBundle\Service\Listener;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Youshido\TokenAuthenticatorBundle\DependencyInjection;
+namespace Youshido\TokenAuthenticationBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -33,6 +33,14 @@ class Configuration implements ConfigurationInterface
                 ->integerNode('token_lifetime')
                     ->defaultValue('864000') //10 days
                     ->cannotBeEmpty()
+                ->end()
+                ->arrayNode('error_codes')
+                    ->addDefaultsIfNotSet()
+                    ->canBeUnset()
+                        ->children()
+                            ->integerNode('invalid_token')->cannotBeEmpty()->defaultValue(401)->end()
+
+                        ->end()
                 ->end()
             ->end();
 

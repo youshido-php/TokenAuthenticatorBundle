@@ -1,6 +1,6 @@
 <?php
 
-namespace Youshido\TokenAuthenticatorBundle\DependencyInjection;
+namespace Youshido\TokenAuthenticationBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -25,6 +25,7 @@ class TokenAuthenticatorExtension extends Extension
         $container->setParameter('token_authenticator.user_model', $config['user_model']);
         $container->setParameter('token_authenticator.login_field', $config['login_field']);
         $container->setParameter('token_authenticator.token_lifetime', $config['token_lifetime']);
+        $container->setParameter('token_authenticator.error_codes', $config['error_codes']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

@@ -5,7 +5,7 @@
  * @author Portey Vasil <portey@gmail.com>
  */
 
-namespace Youshido\TokenAuthenticatorBundle\Service\Exception;
+namespace Youshido\TokenAuthenticationBundle\Service\Exception;
 
 
 class NotValidTokenException extends \Exception
