@@ -1,0 +1,20 @@
+services:
+
+    token_user_provider:
+        class: Youshido\TokenAuthenticatorBundle\Service\TokenUserProvider
+        calls:
+            - [ setUserClass, [%token_authenticator.user_model%]]
+            - [ setContainer, [@service_container]]
+            - [ setLoginField, [%token_authenticator.model_field%]]
+
+    token_authenticator:
+        class:  Youshido\TokenAuthenticatorBundle\Service\TokenAuthenticator
+        calls:
+            - [ setContainer, [@service_container]]
+        public: false
+
+    access_token_helper:
+        class: Youshido\TokenAuthenticatorBundle\Service\Helper\AccessTokenHelper
+        calls:
+            - [ setContainer, [@service_container]]
+            - [ setTokenLifetime, [%token_authenticator.token_lifetime%]]

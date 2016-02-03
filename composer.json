@@ -1,0 +1,27 @@
+{
+  "name": "youshido/token-authenticator",
+  "type": "symfony-bundle",
+  "description": "Symfony bundle to allow you token based authentication",
+  "keywords": ["token", "auth", "authentication", "symfony", "bundle"],
+  "homepage": "https://github.com/Youshido/TokenAuthenticationBundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alexandr Viniychuk",
+      "email": "a@viniychuk.com"
+    },
+    {
+      "name": "Portey Vasil",
+      "email": "portey@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5",
+    "symfony/framework-bundle": "~2.3",
+    "youshido/doctrine-extension": "~1.1.9",
+    "doctrine/doctrine-bundle": "~1.3"
+  },
+  "autoload": {
+    "psr-4": { "Youshido\\TokenAuthenticationBundle\\": "" }
+  }
+}
