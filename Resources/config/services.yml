@@ -23,3 +23,5 @@ services:
         class: Youshido\TokenAuthenticationBundle\Service\Listener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+        calls:
+            - [ setContainer, [@service_container]]

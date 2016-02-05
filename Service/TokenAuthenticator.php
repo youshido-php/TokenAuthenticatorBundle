@@ -37,12 +37,12 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             );
         }
 
-        $errorCode = $this->container->getParameter('token_authenticator.error_codes')['invalid_token'];
-        $apiKey    = $token->getCredentials();
-        $token     = $userProvider->findTokenByApiKey($apiKey);
+        $errorCode   = $this->container->getParameter('token_authenticator.error_codes')['invalid_token'];
+        $tokenString = $token->getCredentials();
+        $token       = $userProvider->findTokenByApiKey($tokenString);
 
         if (!$token) {
-            throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $apiKey), $errorCode);
+            throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $tokenString), $errorCode);
         }
 
         if ($token->getStatus() == AccessToken::STATUS_DENIED) {
@@ -62,7 +62,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             throw new NotValidTokenException('User of this token not exist', $errorCode);
         }
 
-        return new PreAuthenticatedToken($user, $apiKey, $providerKey, $user->getRoles());
+        return new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
     }
 
     public function supportsToken(TokenInterface $token, $providerKey)
@@ -72,13 +72,11 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
 
     public function createToken(Request $request, $providerKey)
     {
-        $apiKey = $request->headers->get('apikey');
-        if (!$apiKey) {
-            $apiKey = $request->headers->get('accesstoken');
-        }
+        $tokenField  = $this->container->getParameter('token_authenticator.token_field');
+        $tokenString = $request->headers->get($tokenField);
 
-        if ($apiKey) {
-            return new PreAuthenticatedToken('anon.', $apiKey, $providerKey);
+        if ($tokenString) {
+            return new PreAuthenticatedToken('anon.', $tokenString, $providerKey);
         }
 
         return null;

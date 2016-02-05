@@ -26,6 +26,10 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+                ->scalarNode('token_field')
+                    ->defaultValue('accessToken')
+                    ->cannotBeEmpty()
+                ->end()
                 ->scalarNode('login_field')
                     ->defaultValue('email')
                     ->cannotBeEmpty()
@@ -39,7 +43,6 @@ class Configuration implements ConfigurationInterface
                     ->canBeUnset()
                         ->children()
                             ->integerNode('invalid_token')->cannotBeEmpty()->defaultValue(401)->end()
-
                         ->end()
                 ->end()
             ->end();

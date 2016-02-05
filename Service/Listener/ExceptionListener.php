@@ -15,6 +15,7 @@ class ExceptionListener
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
+
         $response = new JsonResponse([
             'errors' => [
                 [
