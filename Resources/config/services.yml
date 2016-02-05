@@ -3,9 +3,9 @@ services:
     token_user_provider:
         class: Youshido\TokenAuthenticationBundle\Service\TokenUserProvider
         calls:
-            - [ setUserClass, [%token_authenticator.user_model%]]
+            - [ setUserClass, [%token_authentication.user_model%]]
             - [ setContainer, [@service_container]]
-            - [ setLoginField, [%token_authenticator.login_field%]]
+            - [ setLoginField, [%token_authentication.login_field%]]
 
     token_authenticator:
         class:  Youshido\TokenAuthenticationBundle\Service\TokenAuthenticator
@@ -17,7 +17,7 @@ services:
         class: Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper
         calls:
             - [ setContainer, [@service_container]]
-            - [ setTokenLifetime, [%token_authenticator.token_lifetime%]]
+            - [ setTokenLifetime, [%token_authentication.token_lifetime%]]
 
     token_exception_listener:
         class: Youshido\TokenAuthenticationBundle\Service\Listener\ExceptionListener

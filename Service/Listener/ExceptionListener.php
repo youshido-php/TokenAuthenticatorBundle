@@ -2,6 +2,7 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service\Listener;
 
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
@@ -13,8 +14,12 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 class ExceptionListener
 {
 
+    use ContainerAwareTrait;
+
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
+
+        $field = $this->container->getParameter('token_authentication.token_field');
 
         $response = new JsonResponse([
             'errors' => [
@@ -25,7 +30,7 @@ class ExceptionListener
             ]
         ], 200, [
             'Access-Control-Allow-Origin'  => '*',
-            'Access-Control-Allow-Headers' => 'apikey'
+            'Access-Control-Allow-Headers' => $field
         ]);
 
         $event->setResponse($response);

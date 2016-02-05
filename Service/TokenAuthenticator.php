@@ -37,7 +37,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             );
         }
 
-        $errorCode   = $this->container->getParameter('token_authenticator.error_codes')['invalid_token'];
+        $errorCode   = $this->container->getParameter('token_authentication.error_codes')['invalid_token'];
         $tokenString = $token->getCredentials();
         $token       = $userProvider->findTokenByApiKey($tokenString);
 
@@ -72,7 +72,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
 
     public function createToken(Request $request, $providerKey)
     {
-        $tokenField  = $this->container->getParameter('token_authenticator.token_field');
+        $tokenField  = $this->container->getParameter('token_authentication.token_field');
         $tokenString = $request->headers->get($tokenField);
 
         if ($tokenString) {

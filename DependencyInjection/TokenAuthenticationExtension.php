@@ -22,10 +22,11 @@ class TokenAuthenticationExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('token_authenticator.user_model', $config['user_model']);
-        $container->setParameter('token_authenticator.login_field', $config['login_field']);
-        $container->setParameter('token_authenticator.token_lifetime', $config['token_lifetime']);
-        $container->setParameter('token_authenticator.error_codes', $config['error_codes']);
+        $container->setParameter('token_authentication.user_model', $config['user_model']);
+        $container->setParameter('token_authentication.login_field', $config['login_field']);
+        $container->setParameter('token_authentication.token_lifetime', $config['token_lifetime']);
+        $container->setParameter('token_authentication.error_codes', $config['error_codes']);
+        $container->setParameter('token_authentication.token_field', $config['token_field']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

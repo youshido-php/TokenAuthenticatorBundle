@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('token_authenticator');
+        $rootNode = $treeBuilder->root('token_authentication');
 
         $rootNode
             ->children()
@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('login_field')
-                    ->defaultValue('email')
+                    ->defaultValue('emails')
                     ->cannotBeEmpty()
                 ->end()
                 ->integerNode('token_lifetime')
