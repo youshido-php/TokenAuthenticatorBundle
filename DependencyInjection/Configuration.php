@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('login_field')
-                    ->defaultValue('emails')
+                    ->defaultValue('email')
                     ->cannotBeEmpty()
                 ->end()
                 ->integerNode('token_lifetime')
