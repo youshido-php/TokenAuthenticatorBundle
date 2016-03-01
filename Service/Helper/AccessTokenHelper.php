@@ -84,7 +84,7 @@ class AccessTokenHelper extends ContainerAware
     {
         return [
             'accessToken' => $token->getValue(),
-            'expiresAt'   => date('Y-m-d H:i:s', $token->getCreatedAt()->getTimestamp() + $this->tokenLifetime)
+            'expiresAt'   => (new \DateTime())->setTimestamp($token->getCreatedAt()->getTimestamp() + $this->tokenLifetime),
         ];
     }
 
