@@ -7,17 +7,15 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service;
 
-
-use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
+use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
 use Youshido\TokenAuthenticationBundle\Service\Exception\NotValidTokenException;
 
@@ -37,22 +35,32 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             );
         }
 
-        $errorCode   = $this->container->getParameter('token_authentication.error_codes')['invalid_token'];
         $tokenString = $token->getCredentials();
-        $token       = $userProvider->findTokenByApiKey($tokenString);
+        $user        = $this->validateTokenAndGetUser($userProvider, $tokenString);
+
+        return new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
+    }
+
+    public function validateTokenAndGetUser(TokenUserProvider $userProvider, $tokenString)
+    {
+        $token = $userProvider->findTokenByApiKey($tokenString);
+
+        $errorCode = $this->container->getParameter('token_authentication.error_codes')['invalid_token'];
 
         if (!$token) {
             throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $tokenString), $errorCode);
         }
 
-        if ($token->getStatus() == AccessToken::STATUS_DENIED) {
+        if ($token->getStatus() != AccessToken::STATUS_VALID) {
             throw new NotValidTokenException('Access denied for this token.', $errorCode);
         }
 
-        if ($this->container->get('access_token_helper')->checkExpires($token)) {
-            $em = $this->container->get('doctrine')->getEntityManager();
+        if (!$this->container->get('access_token_helper')->checkExpires($token)) {
+            $em = $this->container->get('doctrine')->getManager();
+
             $em->remove($token);
             $em->flush();
+
             throw new NotValidTokenException('Token expired. Please login again.', $errorCode);
         }
 
@@ -62,7 +70,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             throw new NotValidTokenException('User of this token not exist', $errorCode);
         }
 
-        return new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
+        return $user;
     }
 
     public function supportsToken(TokenInterface $token, $providerKey)

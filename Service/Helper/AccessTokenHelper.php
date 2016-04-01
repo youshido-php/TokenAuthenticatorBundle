@@ -8,13 +8,13 @@
 namespace Youshido\TokenAuthenticationBundle\Service\Helper;
 
 
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Youshido\DoctrineExtensionBundle\Traits\Service\ServiceHelperTrait;
 use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
 
-class AccessTokenHelper extends ContainerAware
+class AccessTokenHelper
 {
-    use ServiceHelperTrait;
+    use ServiceHelperTrait, ContainerAwareTrait;
 
     /** @var int */
     protected $tokenLifetime;
@@ -26,7 +26,7 @@ class AccessTokenHelper extends ContainerAware
      */
     public function checkExpires(AccessToken $token)
     {
-        if (time() < $token->getCreatedAt()->getTimestamp() + $this->tokenLifetime) {
+        if (time() > ($token->getCreatedAt()->getTimestamp() + $this->tokenLifetime)) {
             $token->setStatus(AccessToken::STATUS_EXPIRED);
 
             $this->persist($token);
