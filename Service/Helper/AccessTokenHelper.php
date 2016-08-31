@@ -7,17 +7,23 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service\Helper;
 
-
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Youshido\DoctrineExtensionBundle\Traits\Service\ServiceHelperTrait;
+use Doctrine\ORM\EntityManager;
 use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
 
 class AccessTokenHelper
 {
-    use ServiceHelperTrait, ContainerAwareTrait;
 
     /** @var int */
-    protected $tokenLifetime;
+    private $tokenLifetime;
+
+    /** @var  EntityManager */
+    private $em;
+
+    public function __construct(EntityManager $em, $tokenLifetime)
+    {
+        $this->em            = $em;
+        $this->tokenLifetime = $tokenLifetime;
+    }
 
     /**
      * @param AccessToken $token
@@ -27,11 +33,6 @@ class AccessTokenHelper
     public function checkExpires(AccessToken $token)
     {
         if (time() > ($token->getCreatedAt()->getTimestamp() + $this->tokenLifetime)) {
-            $token->setStatus(AccessToken::STATUS_EXPIRED);
-
-            $this->persist($token);
-            $this->flush();
-
             return false;
         }
 
@@ -45,8 +46,7 @@ class AccessTokenHelper
      */
     public function find($accessToken)
     {
-        return $this->getDoctrine()->getRepository('TokenAuthenticationBundle:AccessToken')
-            ->findOneBy(['value' => $accessToken]);
+        return $this->em->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['value' => $accessToken]);
     }
 
     /**
@@ -64,20 +64,27 @@ class AccessTokenHelper
             ->setValue(base64_encode(md5(time() . $modelId)));
 
         if ($withSave) {
-            $this->persist($token);
-            $this->flush();
+            $this->em->persist($token);
+            $this->em->flush();
         }
 
         return $token;
     }
 
+    public function expireToken(AccessToken $accessToken)
+    {
+        $this->em->remove($accessToken);
+        $this->em->flush();
+    }
+
     /**
      * @param $id
+     *
      * @return AccessToken
      */
     public function findTokenByModelId($id)
     {
-        return $this->getDoctrine()->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
+        return $this->em->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
     }
 
     public function transformToArray(AccessToken $token)

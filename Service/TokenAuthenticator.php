@@ -7,7 +7,6 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service;
 
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -18,11 +17,26 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
 use Youshido\TokenAuthenticationBundle\Service\Exception\NotValidTokenException;
+use Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper;
 
 class TokenAuthenticator implements SimplePreAuthenticatorInterface, AuthenticationFailureHandlerInterface
 {
 
-    use ContainerAwareTrait;
+    /** @var AccessTokenHelper */
+    private $tokenHelper;
+
+    /** @var  string */
+    private $tokenRequestHeader;
+
+    /** @var array */
+    private $errorCodes = [];
+
+    public function __construct(AccessTokenHelper $tokenHelper, $tokenRequestHeader, array $errorCodes = [])
+    {
+        $this->tokenHelper        = $tokenHelper;
+        $this->tokenRequestHeader = $tokenRequestHeader;
+        $this->errorCodes         = $errorCodes;
+    }
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
@@ -45,7 +59,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
     {
         $token = $userProvider->findTokenByApiKey($tokenString);
 
-        $errorCode = $this->container->getParameter('token_authentication.error_codes')['invalid_token'];
+        $errorCode = array_key_exists('invalid_token', $this->errorCodes) ? $this->errorCodes['invalid_token'] : 401;
 
         if (!$token) {
             throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $tokenString), $errorCode);
@@ -55,11 +69,8 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             throw new NotValidTokenException('Access denied for this token.', $errorCode);
         }
 
-        if (!$this->container->get('access_token_helper')->checkExpires($token)) {
-            $em = $this->container->get('doctrine')->getManager();
-
-            $em->remove($token);
-            $em->flush();
+        if (!$this->tokenHelper->checkExpires($token)) {
+            $this->tokenHelper->expireToken($token);
 
             throw new NotValidTokenException('Token expired. Please login again.', $errorCode);
         }
@@ -80,8 +91,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
 
     public function createToken(Request $request, $providerKey)
     {
-        $tokenField  = $this->container->getParameter('token_authentication.token_field');
-        $tokenString = $request->headers->get($tokenField);
+        $tokenString = $request->headers->get($this->tokenRequestHeader);
 
         if ($tokenString) {
             return new PreAuthenticatedToken('anon.', $tokenString, $providerKey);

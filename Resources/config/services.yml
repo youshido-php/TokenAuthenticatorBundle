@@ -2,26 +2,19 @@ services:
 
     token_user_provider:
         class: Youshido\TokenAuthenticationBundle\Service\TokenUserProvider
-        calls:
-            - [ setUserClass, [%token_authentication.user_model%]]
-            - [ setContainer, [@service_container]]
-            - [ setLoginField, [%token_authentication.login_field%]]
+        arguments: ["@doctrine.orm.entity_manager", "@access_token_helper", "%token_authentication.user_model%", "%token_authentication.login_field%"]
 
     token_authenticator:
         class:  Youshido\TokenAuthenticationBundle\Service\TokenAuthenticator
-        calls:
-            - [ setContainer, [@service_container]]
+        arguments: ["@access_token_helper", "%token_authentication.token_field%", "%token_authentication.error_codes%" ]
         public: false
 
     access_token_helper:
         class: Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper
-        calls:
-            - [ setContainer, [@service_container]]
-            - [ setTokenLifetime, [%token_authentication.token_lifetime%]]
+        arguments: ["@doctrine.orm.entity_manager", "%token_authentication.token_lifetime%"]
 
     token_exception_listener:
         class: Youshido\TokenAuthenticationBundle\Service\Listener\ExceptionListener
+        arguments: ["%token_authentication.token_field%"]
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
-        calls:
-            - [ setContainer, [@service_container]]
