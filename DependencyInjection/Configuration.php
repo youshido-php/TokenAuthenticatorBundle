@@ -36,13 +36,12 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->integerNode('token_lifetime')
                     ->defaultValue('864000') //10 days
-                    ->cannotBeEmpty()
                 ->end()
                 ->arrayNode('error_codes')
                     ->addDefaultsIfNotSet()
                     ->canBeUnset()
                         ->children()
-                            ->integerNode('invalid_token')->cannotBeEmpty()->defaultValue(401)->end()
+                            ->integerNode('invalid_token')->defaultValue(401)->end()
                         ->end()
                 ->end()
             ->end();

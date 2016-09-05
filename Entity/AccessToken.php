@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity
  *
  * @UniqueEntity(fields={"modelId", "value"})
+ * @ORM\HasLifecycleCallbacks
  */
 class AccessToken
 {
