@@ -50,7 +50,7 @@ class AccessTokenHelper
     }
 
     /**
-     * @param $modelId  int
+     * @param $modelId  string
      * @param $withSave bool
      *
      * @return AccessToken

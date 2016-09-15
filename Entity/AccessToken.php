@@ -33,9 +33,9 @@ class AccessToken
     private $id;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(type="integer", nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      */
     private $modelId;
 
@@ -73,7 +73,7 @@ class AccessToken
     /**
      * Set modelId
      *
-     * @param integer $modelId
+     * @param string $modelId
      *
      * @return AccessToken
      */
@@ -87,7 +87,7 @@ class AccessToken
     /**
      * Get modelId
      *
-     * @return integer
+     * @return string
      */
     public function getModelId()
     {
