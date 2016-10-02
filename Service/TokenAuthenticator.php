@@ -43,7 +43,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
         if (!$userProvider instanceof TokenUserProvider) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'The user provider must be an instance of ApiUserProvider (%s was given).',
+                    'The user provider must be an instance of TokenUserProvider (%s was given).',
                     get_class($userProvider)
                 )
             );
