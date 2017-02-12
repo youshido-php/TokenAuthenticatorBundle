@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
-use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
+use Youshido\TokenAuthenticationBundle\Model\AccessTokenStatus;
 use Youshido\TokenAuthenticationBundle\Service\Exception\NotValidTokenException;
 use Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper;
 
@@ -52,7 +52,10 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
         $tokenString = $token->getCredentials();
         $user        = $this->validateTokenAndGetUser($userProvider, $tokenString);
 
-        return new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
+        $token = new PreAuthenticatedToken($user, $tokenString, $providerKey, [$user->getRole()]);
+        $token->setAuthenticated(true);
+
+        return $token;
     }
 
     public function validateTokenAndGetUser(TokenUserProvider $userProvider, $tokenString)
@@ -65,7 +68,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
             throw new NotValidTokenException(sprintf('API Key "%s" does not exist.', $tokenString), $errorCode);
         }
 
-        if ($token->getStatus() != AccessToken::STATUS_VALID) {
+        if ($token->getStatus() != AccessTokenStatus::STATUS_VALID) {
             throw new NotValidTokenException('Access denied for this token.', $errorCode);
         }
 

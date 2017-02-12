@@ -1,63 +1,54 @@
 <?php
 
-namespace Youshido\TokenAuthenticationBundle\Entity;
+namespace Youshido\TokenAuthenticationBundle\Document;
 
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Youshido\TokenAuthenticationBundle\Model\AccessTokenInterface;
+use Youshido\TokenAuthenticationBundle\Model\AccessTokenStatus;
 
 /**
  * AccessToken
  *
- * @ORM\Table(indexes={
- *    @ORM\Index(name="search_inx", columns={"value"})
- * })
- * @ORM\Entity
+ * @MongoDB\Document(collection="access_tokens")
  *
  * @UniqueEntity(fields={"modelId", "value"})
- * @ORM\HasLifecycleCallbacks
+ * @MongoDB\HasLifecycleCallbacks()
  */
 class AccessToken implements AccessTokenInterface
 {
 
-    const STATUS_VALID   = 0;
-    const STATUS_EXPIRED = 1;
-    const STATUS_DENIED  = 2;
-
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @MongoDB\Id
      */
     private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=false)
+     * @MongoDB\Field(type="string", nullable=false)
      */
     private $modelId;
 
     /**
      * @var int
      *
-     * @ORM\Column(type="integer", nullable=false)
+     * @MongoDB\Field(type="int", nullable=false)
      */
-    private $status = self::STATUS_VALID;
+    private $status = AccessTokenStatus::STATUS_VALID;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=false)
+     * @MongoDB\Index()
+     * @MongoDB\Field(type="string", nullable=false)
      */
     private $value;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="created_at", type="datetime")
+     * @MongoDB\Field(type="date", nullable=false)
      */
     private $createdAt;
 
@@ -164,7 +155,7 @@ class AccessToken implements AccessTokenInterface
     }
 
     /**
-     * @ORM\PrePersist()
+     * @MongoDB\PrePersist()
      */
     public function onCreate()
     {

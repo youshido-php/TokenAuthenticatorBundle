@@ -7,11 +7,10 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
+use Youshido\TokenAuthenticationBundle\Model\AccessTokenInterface;
 use Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper;
 
 class TokenUserProvider implements UserProviderInterface
@@ -26,12 +25,12 @@ class TokenUserProvider implements UserProviderInterface
     /** @var  AccessTokenHelper */
     private $tokenHelper;
 
-    /** @var  EntityManager */
-    private $em;
+    /** @var  UniversalObjectManager */
+    private $om;
 
-    public function __construct(EntityManager $em, AccessTokenHelper $tokenHelper, $userClass, $loginField)
+    public function __construct(UniversalObjectManager $om, AccessTokenHelper $tokenHelper, $userClass, $loginField)
     {
-        $this->em          = $em;
+        $this->om          = $om;
         $this->tokenHelper = $tokenHelper;
         $this->userClass   = $userClass;
         $this->loginField  = $loginField;
@@ -40,7 +39,7 @@ class TokenUserProvider implements UserProviderInterface
     /**
      * @param $apiKey
      *
-     * @return null|\Youshido\TokenAuthenticationBundle\Entity\AccessToken
+     * @return null|AccessTokenInterface
      */
     public function findTokenByApiKey($apiKey)
     {
@@ -48,13 +47,13 @@ class TokenUserProvider implements UserProviderInterface
     }
 
     /**
-     * @param AccessToken $token
+     * @param AccessTokenInterface $token
      *
      * @return object
      */
-    public function loadUserByToken(AccessToken $token)
+    public function loadUserByToken(AccessTokenInterface $token)
     {
-        return $this->em->getRepository($this->getUserClass())->find($token->getModelId());
+        return $this->om->getRepository($this->getUserClass())->find($token->getModelId());
     }
 
     /**
@@ -62,7 +61,7 @@ class TokenUserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        return $this->em->getRepository($this->getUserClass())->findOneBy([$this->getLoginField() => $username]);
+        return $this->om->getRepository($this->getUserClass())->findOneBy([$this->getLoginField() => $username]);
     }
 
     /**

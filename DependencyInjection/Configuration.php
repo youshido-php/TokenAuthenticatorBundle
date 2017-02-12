@@ -34,6 +34,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('email')
                     ->cannotBeEmpty()
                 ->end()
+                ->enumNode('doctrine_mode')
+                    ->values(['orm', 'odm'])
+                    ->defaultValue('orm')
+                ->end()
                 ->integerNode('token_lifetime')
                     ->defaultValue('864000') //10 days
                 ->end()

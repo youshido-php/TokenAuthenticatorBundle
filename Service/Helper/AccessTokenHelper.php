@@ -7,8 +7,10 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service\Helper;
 
-use Doctrine\ORM\EntityManager;
-use Youshido\TokenAuthenticationBundle\Entity\AccessToken;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Youshido\TokenAuthenticationBundle\Model\AccessTokenInterface;
+use Youshido\TokenAuthenticationBundle\Service\UniversalObjectManager;
 
 class AccessTokenHelper
 {
@@ -16,21 +18,21 @@ class AccessTokenHelper
     /** @var int */
     private $tokenLifetime;
 
-    /** @var  EntityManager */
-    private $em;
+    /** @var UniversalObjectManager */
+    private $om;
 
-    public function __construct(EntityManager $em, $tokenLifetime)
+    public function __construct($om, $tokenLifetime)
     {
-        $this->em            = $em;
+        $this->om            = $om;
         $this->tokenLifetime = $tokenLifetime;
     }
 
     /**
-     * @param AccessToken $token
+     * @param AccessTokenInterface $token
      *
      * @return bool
      */
-    public function checkExpires(AccessToken $token)
+    public function checkExpires(AccessTokenInterface $token)
     {
         if (time() > ($token->getCreatedAt()->getTimestamp() + $this->tokenLifetime)) {
             return false;
@@ -42,52 +44,55 @@ class AccessTokenHelper
     /**
      * @param $accessToken
      *
-     * @return null|AccessToken
+     * @return null|AccessTokenInterface
      */
     public function find($accessToken)
     {
-        return $this->em->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['value' => $accessToken]);
+        return $this->om->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['value' => $accessToken]);
     }
 
     /**
      * @param $modelId  string
      * @param $withSave bool
      *
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     public function generateToken($modelId, $withSave = true)
     {
-        $token = new AccessToken();
+        $token = $this->om->createNewTokenInstance();
+
+        $tokenValue = base64_encode(md5(time() . $modelId));
+        $tokenValue = str_replace('=', '', $tokenValue);
 
         $token
             ->setModelId($modelId)
-            ->setValue(base64_encode(md5(time() . $modelId)));
+            ->setValue($tokenValue);
 
         if ($withSave) {
-            $this->em->persist($token);
-            $this->em->flush();
+            $this->om->persist($token);
+            $this->om->flush();
         }
 
         return $token;
     }
 
-    public function expireToken(AccessToken $accessToken)
+    public function expireToken(AccessTokenInterface $accessToken)
     {
-        $this->em->remove($accessToken);
-        $this->em->flush();
+        $this->om->remove($accessToken);
+        $this->om->flush();
     }
 
     /**
      * @param $id
      *
-     * @return AccessToken
+     * @return AccessTokenInterface
      */
     public function findTokenByModelId($id)
     {
-        return $this->em->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
+        return $this->om->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
     }
 
-    public function transformToArray(AccessToken $token)
+    public function transformToArray(AccessTokenInterface $token)
     {
         return [
             'accessToken' => $token->getValue(),

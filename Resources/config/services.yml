@@ -1,8 +1,12 @@
 services:
 
+    universal_object_manager:
+      class: Youshido\TokenAuthenticationBundle\Service\UniversalObjectManager
+      arguments: ["@service_container", "%token_authentication.doctrine_mode%"]
+
     token_user_provider:
         class: Youshido\TokenAuthenticationBundle\Service\TokenUserProvider
-        arguments: ["@doctrine.orm.entity_manager", "@access_token_helper", "%token_authentication.user_model%", "%token_authentication.login_field%"]
+        arguments: ["@universal_object_manager", "@access_token_helper", "%token_authentication.user_model%", "%token_authentication.login_field%"]
 
     token_authenticator:
         class:  Youshido\TokenAuthenticationBundle\Service\TokenAuthenticator
@@ -11,7 +15,7 @@ services:
 
     access_token_helper:
         class: Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper
-        arguments: ["@doctrine.orm.entity_manager", "%token_authentication.token_lifetime%"]
+        arguments: ["@universal_object_manager", "%token_authentication.token_lifetime%"]
 
     token_exception_listener:
         class: Youshido\TokenAuthenticationBundle\Service\Listener\ExceptionListener

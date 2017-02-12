@@ -27,6 +27,7 @@ class TokenAuthenticationExtension extends Extension
         $container->setParameter('token_authentication.token_lifetime', $config['token_lifetime']);
         $container->setParameter('token_authentication.error_codes', $config['error_codes']);
         $container->setParameter('token_authentication.token_field', $config['token_field']);
+        $container->setParameter('token_authentication.doctrine_mode', $config['doctrine_mode']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
