@@ -2,7 +2,7 @@ services:
 
     universal_object_manager:
       class: Youshido\TokenAuthenticationBundle\Service\UniversalObjectManager
-      arguments: ["@service_container", "%token_authentication.doctrine_mode%"]
+      arguments: ["@service_container", "%token_authentication.platform%"]
 
     token_user_provider:
         class: Youshido\TokenAuthenticationBundle\Service\TokenUserProvider

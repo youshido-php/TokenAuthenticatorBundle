@@ -11,24 +11,24 @@ use Youshido\TokenAuthenticationBundle\Entity\AccessToken as AccessTokenEntity;
 
 class UniversalObjectManager
 {
-    const MODE_ODM = "odm";
-    const MODE_ORM = "orm";
+    const PLATFORM_ODM = "odm";
+    const PLATFORM_ORM = "orm";
 
     /** @var ContainerInterface */
     private $container;
 
     /** @var string */
-    private $mode;
+    private $platform;
 
     /**
      * @var ObjectManager
      */
     private $manager;
 
-    public function __construct(ContainerInterface $container, $mode)
+    public function __construct(ContainerInterface $container, $platform)
     {
         $this->container = $container;
-        $this->mode      = $mode;
+        $this->platform  = $platform;
         $this->manager   = $this->getObjectManager();
     }
 
@@ -37,7 +37,7 @@ class UniversalObjectManager
      */
     public function getObjectManager()
     {
-        return $this->mode == self::MODE_ODM ? $this->container->get('doctrine.odm.mongodb.document_manager') : $this->container->get('doctrine.orm.entity_manager');
+        return $this->platform == self::PLATFORM_ODM ? $this->container->get('doctrine.odm.mongodb.document_manager') : $this->container->get('doctrine.orm.entity_manager');
     }
 
     public function getRepository($repositoryName)
@@ -67,7 +67,7 @@ class UniversalObjectManager
 
     public function createNewTokenInstance()
     {
-        return $this->mode === self::MODE_ORM ? new AccessTokenEntity() : new AccessTokenDocument();
+        return $this->platform === self::PLATFORM_ORM ? new AccessTokenEntity() : new AccessTokenDocument();
     }
 
 }

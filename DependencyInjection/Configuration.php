@@ -34,7 +34,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('email')
                     ->cannotBeEmpty()
                 ->end()
-                ->enumNode('doctrine_mode')
+                ->enumNode('platform')
                     ->values(['orm', 'odm'])
                     ->defaultValue('orm')
                 ->end()
