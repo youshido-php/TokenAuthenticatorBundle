@@ -52,7 +52,7 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
         $tokenString = $token->getCredentials();
         $user        = $this->validateTokenAndGetUser($userProvider, $tokenString);
 
-        $token = new PreAuthenticatedToken($user, $tokenString, $providerKey, [$user->getRole()]);
+        $token = new PreAuthenticatedToken($user, $tokenString, $providerKey, $user->getRoles());
         $token->setAuthenticated(true);
 
         return $token;
