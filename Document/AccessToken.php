@@ -2,7 +2,7 @@
 
 namespace Youshido\TokenAuthenticationBundle\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Youshido\TokenAuthenticationBundle\Model\AccessTokenInterface;
 use Youshido\TokenAuthenticationBundle\Model\AccessTokenStatus;
@@ -10,45 +10,45 @@ use Youshido\TokenAuthenticationBundle\Model\AccessTokenStatus;
 /**
  * AccessToken
  *
- * @MongoDB\Document(collection="access_tokens")
+ * @ODM\Document(collection="access_tokens")
  *
  * @UniqueEntity(fields={"modelId", "value"})
- * @MongoDB\HasLifecycleCallbacks()
+ * @ODM\HasLifecycleCallbacks()
  */
 class AccessToken implements AccessTokenInterface
 {
 
     /**
-     * @MongoDB\Id
+     * @ODM\Id
      */
     private $id;
 
     /**
      * @var string
      *
-     * @MongoDB\Field(type="string", nullable=false)
+     * @ODM\Field(type="object_id")
      */
     private $modelId;
 
     /**
      * @var int
      *
-     * @MongoDB\Field(type="int", nullable=false)
+     * @ODM\Field(type="int")
      */
     private $status = AccessTokenStatus::STATUS_VALID;
 
     /**
      * @var string
      *
-     * @MongoDB\Index()
-     * @MongoDB\Field(type="string", nullable=false)
+     * @ODM\Index()
+     * @ODM\Field(type="string")
      */
     private $value;
 
     /**
      * @var \DateTime
      *
-     * @MongoDB\Field(type="date", nullable=false)
+     * @ODM\Field(type="date")
      */
     private $createdAt;
 
@@ -155,7 +155,7 @@ class AccessToken implements AccessTokenInterface
     }
 
     /**
-     * @MongoDB\PrePersist()
+     * @ODM\PrePersist()
      */
     public function onCreate()
     {
