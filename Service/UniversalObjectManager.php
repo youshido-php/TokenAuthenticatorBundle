@@ -2,20 +2,17 @@
 
 namespace Youshido\TokenAuthenticationBundle\Service;
 
-
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Youshido\TokenAuthenticationBundle\Document\AccessToken as AccessTokenDocument;
 use Youshido\TokenAuthenticationBundle\Entity\AccessToken as AccessTokenEntity;
 
-
+/**
+ * Class UniversalObjectManager
+ */
 class UniversalObjectManager
 {
-    const PLATFORM_ODM = "odm";
-    const PLATFORM_ORM = "orm";
-
-    /** @var ContainerInterface */
-    private $container;
+    const PLATFORM_ODM = 'odm';
+    const PLATFORM_ORM = 'orm';
 
     /** @var string */
     private $platform;
@@ -25,11 +22,10 @@ class UniversalObjectManager
      */
     private $manager;
 
-    public function __construct(ContainerInterface $container, $platform)
+    public function __construct($manager, $platform)
     {
-        $this->container = $container;
-        $this->platform  = $platform;
-        $this->manager   = $this->getObjectManager();
+        $this->platform = $platform;
+        $this->manager  = $manager;
     }
 
     /**
@@ -37,7 +33,7 @@ class UniversalObjectManager
      */
     public function getObjectManager()
     {
-        return $this->platform == self::PLATFORM_ODM ? $this->container->get('doctrine.odm.mongodb.document_manager') : $this->container->get('doctrine.orm.entity_manager');
+        return $this->manager;
     }
 
     public function getRepository($repositoryName)
