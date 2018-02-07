@@ -14,17 +14,20 @@ use Youshido\TokenAuthenticationBundle\Service\UniversalObjectManager;
 
 class AccessTokenHelper
 {
-
     /** @var int */
     private $tokenLifetime;
 
     /** @var UniversalObjectManager */
     private $om;
 
-    public function __construct($om, $tokenLifetime)
+    /** @var string */
+    private $platform;
+
+    public function __construct($om, $tokenLifetime, $platform)
     {
         $this->om            = $om;
         $this->tokenLifetime = $tokenLifetime;
+        $this->platform      = $platform;
     }
 
     /**
@@ -89,6 +92,10 @@ class AccessTokenHelper
      */
     public function findTokenByModelId($id)
     {
+        if ($this->platform === UniversalObjectManager::PLATFORM_ODM) {
+            $id = new \MongoId($id);
+        }
+
         return $this->om->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
     }
 
