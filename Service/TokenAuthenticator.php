@@ -95,6 +95,9 @@ class TokenAuthenticator implements SimplePreAuthenticatorInterface, Authenticat
     public function createToken(Request $request, $providerKey)
     {
         $tokenString = $request->headers->get($this->tokenRequestHeader);
+        if (strpos($tokenString, 'Bearer') === 0) {
+            $tokenString = substr($tokenString, 7);
+        }
 
         if ($tokenString) {
             return new PreAuthenticatedToken('anon.', $tokenString, $providerKey);
