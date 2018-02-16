@@ -10,7 +10,7 @@ use Youshido\TokenAuthenticationBundle\Model\AccessTokenStatus;
 /**
  * AccessToken
  *
- * @ODM\Document(collection="access_tokens")
+ * @ODM\Document(collection="accessTokens")
  *
  * @UniqueEntity(fields={"modelId", "value"})
  * @ODM\HasLifecycleCallbacks()

@@ -64,8 +64,8 @@ class AccessTokenHelper
     {
         $token = $this->om->createNewTokenInstance();
 
-        $tokenValue = base64_encode(md5(time() . $modelId));
-        $tokenValue = str_replace('=', '', $tokenValue);
+        $tokenValue = md5(time() . $modelId) . ':' . json_encode(['id' => $modelId]);
+        $tokenValue = str_replace('=', '', base64_encode($tokenValue));
 
         $token
             ->setModelId($modelId)
