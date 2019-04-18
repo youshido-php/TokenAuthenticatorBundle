@@ -38,6 +38,10 @@ class Configuration implements ConfigurationInterface
                     ->values(['orm', 'odm'])
                     ->defaultValue('orm')
                 ->end()
+                ->enumNode('odm_version')
+                    ->values([1, 2])
+                    ->defaultValue(1)
+                ->end()
                 ->integerNode('token_lifetime')
                     ->defaultValue('864000') //10 days
                 ->end()

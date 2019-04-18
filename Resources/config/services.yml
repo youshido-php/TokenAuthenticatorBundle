@@ -15,7 +15,7 @@ services:
 
     access_token_helper:
         class: Youshido\TokenAuthenticationBundle\Service\Helper\AccessTokenHelper
-        arguments: ["@universal_object_manager", "%token_authentication.token_lifetime%", '%token_authentication.platform%']
+        arguments: ["@universal_object_manager", "%token_authentication.token_lifetime%", '%token_authentication.platform%', '%token_authentication.odm_version%']
 
     token_exception_listener:
         class: Youshido\TokenAuthenticationBundle\Service\Listener\ExceptionListener

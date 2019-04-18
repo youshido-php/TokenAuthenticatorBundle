@@ -28,6 +28,7 @@ class TokenAuthenticationExtension extends Extension
         $container->setParameter('token_authentication.error_codes', $config['error_codes']);
         $container->setParameter('token_authentication.token_field', $config['token_field']);
         $container->setParameter('token_authentication.platform', $config['platform']);
+        $container->setParameter('token_authentication.odm_version', $config['odm_version']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

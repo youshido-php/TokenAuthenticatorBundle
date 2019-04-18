@@ -8,7 +8,6 @@
 namespace Youshido\TokenAuthenticationBundle\Service\Helper;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Youshido\TokenAuthenticationBundle\Model\AccessTokenInterface;
 use Youshido\TokenAuthenticationBundle\Service\UniversalObjectManager;
 
@@ -23,11 +22,15 @@ class AccessTokenHelper
     /** @var string */
     private $platform;
 
-    public function __construct($om, $tokenLifetime, $platform)
+    /** @var int */
+    private $odmVersion;
+
+    public function __construct($om, $tokenLifetime, $platform, $odmVersion)
     {
         $this->om            = $om;
         $this->tokenLifetime = $tokenLifetime;
         $this->platform      = $platform;
+        $this->odmVersion    = $odmVersion;
     }
 
     /**
@@ -93,7 +96,16 @@ class AccessTokenHelper
     public function findTokenByModelId($id)
     {
         if ($this->platform === UniversalObjectManager::PLATFORM_ODM) {
-            $id = new \MongoId($id);
+            switch ($this->odmVersion) {
+                case 1:
+                    $id = new \MongoId($id);
+                    break;
+                case 2:
+                    $id = new \MongoDB\BSON\ObjectId($id);
+                    break;
+                default:
+                    throw new \UnexpectedValueException('Unknown ODM version');
+            }
         }
 
         return $this->om->getRepository('TokenAuthenticationBundle:AccessToken')->findOneBy(['modelId' => $id]);
