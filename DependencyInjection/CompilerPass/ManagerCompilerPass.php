@@ -19,7 +19,12 @@ class ManagerCompilerPass implements CompilerPassInterface
         $platform = $container->getParameter('token_authentication.platform');
 
         if ($platform === UniversalObjectManager::PLATFORM_ODM) {
-            $definition = $container->findDefinition('doctrine.odm.mongodb.document_manager');
+            $odmVersion = $container->getParameter('token_authentication.odm_version');
+            if ($odmVersion === 1) {
+                $definition = $container->findDefinition('doctrine.odm.mongodb.document_manager');
+            } else {
+                $definition = $container->findDefinition('doctrine_mongodb.odm.document_manager');
+            }
         } else {
             $definition = $container->findDefinition('doctrine.orm.entity_manager');
         }
