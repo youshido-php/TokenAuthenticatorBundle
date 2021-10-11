@@ -1,5 +1,5 @@
 {
-  "name": "youshido/token-authenticator",
+  "name": "ozznest/token-authenticator",
   "type": "symfony-bundle",
   "description": "Symfony bundle to allow you token based authentication",
   "keywords": ["token", "auth", "authentication", "symfony", "bundle"],
@@ -8,17 +8,13 @@
   "version": "1.1.1",
   "authors": [
     {
-      "name": "Alexandr Viniychuk",
-      "email": "a@viniychuk.com"
-    },
-    {
-      "name": "Portey Vasil",
-      "email": "portey@gmail.com"
+      "name": "Olexiy Chuiko",
+      "email": "oznest@i.ua"
     }
   ],
   "require": {
     "php": ">=5.5",
-    "symfony/framework-bundle": "~2.3|~3.0|~4.0"
+    "symfony/framework-bundle": "~2.3|~3.0|~4.0|~5.0"
   },
   "autoload": {
     "psr-4": { "Youshido\\TokenAuthenticationBundle\\": "" }
