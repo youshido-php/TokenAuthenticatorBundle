@@ -3,7 +3,7 @@
 namespace Youshido\TokenAuthenticationBundle\Service\Listener;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
 /**
  * Date: 2/3/16
@@ -20,13 +20,13 @@ class ExceptionListener
         $this->tokenRequestHeader = $tokenRequestHeader;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
         $response = new JsonResponse([
             'errors' => [
                 [
-                    'message' => $event->getException()->getMessage(),
-                    'code'    => $event->getException()->getCode()
+                    'message' =>  $event->getThrowable()->getMessage(),
+                    'code'    =>  $event->getThrowable()->getCode()
                 ]
             ]
         ], 200, [
